@@ -1,0 +1,29 @@
+{
+  "name": "colory",
+  "version": "1.0.0",
+  "description": "Plugin to change the background color of chosen element",
+  "main": "app.js",
+  "dependencies": {
+    "webpack": "^5.15.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Tarasenkos/colory.git"
+  },
+  "keywords": [
+    "js",
+    "Javascript",
+    "color",
+    "picker"
+  ],
+  "author": "Tarasenkos <tarasenkos80@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Tarasenkos/colory/issues"
+  },
+  "homepage": "https://github.com/Tarasenkos/colory#readme"
+}
