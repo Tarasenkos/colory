@@ -2,7 +2,8 @@ import { getBaseColor } from "../common/functions.js";
 import { Listener } from "../common/Listener.js";
 
 export class RangeArea extends Listener {
-  static className = 'colory-range'
+  
+  static className = "colory-range"
   constructor(root, options) {
     super(['mousedown'], root, options.trigger)
     this.root = root
