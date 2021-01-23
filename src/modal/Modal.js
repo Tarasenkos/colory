@@ -21,11 +21,13 @@ export class ModalWindow {
         modal.appendChild(createModalWindow(this, coord))
         
         document.body.appendChild(modal)
-        modal.addEventListener('click', ()=> this.destroy(modal))
+        modal.addEventListener('mousedown', ()=> this.destroy(modal))
   }
 
   destroy(modal) {
+    
     if (event.target.id === 'colory-modal') {
+      modal.removeEventListener('mousedown', ()=> this.destroy(modal))
       document.body.removeChild(modal)
       modal = null
     }
@@ -43,7 +45,6 @@ function createModalWindow(self, coord) {
       let root = createDomNode('div', Component.className)
       let component = new Component(root, self)
           component.init(root)
-  
           domNode.appendChild(root)
     })
   

@@ -2,7 +2,34 @@
   border: 0px;
   
   box-sizing: border-box;
+  font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif
 }
+
+.fields{
+  display: flex;
+  justify-content: space-between;
+  width: 800px;
+  margin: 0 auto;
+}
+
+.field_1 {
+  background: rgb(182, 125, 125);
+  min-height: 100px;
+  width: 200px;
+
+}
+.field_2 {
+  background: rgb(149, 212, 149);
+  min-height: 100px;
+  width: 200px;
+
+}
+.field_3 {
+  background: rgb(139, 139, 212);
+  min-height: 100px;
+  width: 200px;
+}
+
 
 .colory {
   cursor: pointer;
@@ -10,21 +37,22 @@
 
 
 .colory-modal {
-  position: absolute;
+  position: fixed;
   left: 0;
   top:0;
-  width: 100vw;
-  height: 100vw;
+  right:0;
+  bottom: 0;
 }
 
 
 .colory-window {
+  
   position: absolute;
   display: flex;
   flex-direction: row;
   min-width: 300px;
   min-height: 200px;
-  background-color: rgb(50, 28, 28);
+  background-color: rgb(65, 31, 31);
   border-radius: 5px;
  
 }
@@ -35,6 +63,9 @@
   min-width: 80%;
   padding: 10px;
 }
+
+
+
 
 .colory-picker-area-above {
   
@@ -54,7 +85,8 @@
 
 .colory-picker-area {
   
-  
+  overflow: hidden;
+  position: relative;
   width: 100%;
   height: 100%;
   
@@ -69,6 +101,17 @@
    
 }
 
+
+.colory-pickpoint{
+  position:absolute;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  border: solid 2px white;
+  box-shadow: 0 0 0 2px black;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
 
 .colory-range {
   min-height: 100%;
