@@ -36,10 +36,10 @@ export class ModalWindow {
 
 }
 
-function createModalWindow(self, coord) {
+function createModalWindow(self, screen) {
     
     let domNode = createDomNode('div', 'colory-window')
-        domNode.style = `left: ${coord.x}px; top: ${coord.y}px`
+        domNode.style = `left: ${screen.x}px; top: ${screen.y}px`
     
     self.components.map((Component)=>{
       let root = createDomNode('div', Component.className)

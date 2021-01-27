@@ -17,7 +17,7 @@ export class PickArea extends Listener {
 
     const baseColor = parceColor(getBaseColor(this, this.color))
     
-    const coord = getCoordByRGB(this.color, baseColor)
+    const coord = RGB_TO_XY(this.color, baseColor)
     getPointerPosition(this.pickPiont, coord)
 
   
@@ -36,58 +36,52 @@ export class PickArea extends Listener {
   }
 
   onMousedown(event) {
-    
-    const target = event.target
-    const targetCoord = target.getBoundingClientRect()
-    
-    if (target.id === "pick") {
-      const baseColor = parceColor(getBaseColor(this, this.color))
-      const coord = getClickCoord(targetCoord)
-      this.color = computeColor(baseColor, coord)
 
+    const pickArea = event.target.getBoundingClientRect()
+    console.log(pickArea)
+    
+    if (event.target.id === "pick") {
+      const pickArea = event.target.getBoundingClientRect()
+      const baseColor = parceColor(getBaseColor(this, this.color))
       
-      getPointerPosition(this.pickPiont, coord)
-      changeTargetColor(this, this.color)
-      
-      return onMouseMoveHandler(this, targetCoord, baseColor)
+      onMouseMoveHandler(this, pickArea, baseColor)()
     }
   }
-
 
   _changePickAreaColor(color) {
     this.color = color
     this.root.children[0].style.backgroundColor = this.color
 
   }
-
 }
 
 function getPointerPosition(pickPiont, coord) {
 
-  pickPiont.style.left = coord.coordX + 'px'
-  pickPiont.style.top = coord.coordY + 'px'
-    
+  pickPiont.style.right = coord.X + 'px'
+  pickPiont.style.bottom = coord.Y + 'px'
+ 
+console.log('pickPiont', coord.X, coord.Y)
+
   }
 
-function onMouseMoveHandler(self, targetCoord, baseColor) {
+function onMouseMoveHandler(self, pickArea, baseColor) {
 
-  onmousemove = () => {
-    let coord = getClickCoord(targetCoord)
-    let color = computeColor(baseColor, coord)
+  return onmousemove = () => {
+    let coord = getClickXY(pickArea)
+    let color = XY_TO_RGB(baseColor, coord)
 
     getPointerPosition(self.pickPiont, coord)
     changeTargetColor(self, color)
-  }
 
-  onmouseup = () => {
-    onmousemove = null
-    onmouseup = null
+    onmouseup = () => {
+      onmousemove = null
+      onmouseup = null
+    }
   }
-
 }
 
 
-function computeColor(baseColor, coord) {
+function XY_TO_RGB(baseColor, coord) {
 
 let R,G,B,difR,difG,difB
 
@@ -96,6 +90,7 @@ console.log('Исходные координаты', coord)
 difR = 255 - baseColor.R
 difG = 255 - baseColor.G
 difB = 255 - baseColor.B
+
 
 R = Math.round((difR*coord.Xcent + baseColor.R) * coord.Ycent)
 G = Math.round((difG*coord.Xcent + baseColor.G) * coord.Ycent)
@@ -106,56 +101,50 @@ B = Math.round((difB*coord.Xcent + baseColor.B) * coord.Ycent)
   return result
 }
 
-function getCoordByRGB(elColor, baseColor) {
+function RGB_TO_XY(elColor, baseColor) {
 
   let difR, difG, difB
 
   difR = 255 - baseColor.R
   difG = 255 - baseColor.G
   difB = 255 - baseColor.B
+  
 
   let {R, G, B} = parceColor(elColor)
   let X, Y, coordX, coordY
  
-  X = (G * baseColor.R - R * baseColor.G) / (R * difG - G * difR) || 0
-  Y = B / (difB * X + baseColor.B) || 0
+  coordX = (G * baseColor.R - R * baseColor.G) / (R * difG - G * difR) || 0
+  coordY = 1 - (B / (difB * coordX + baseColor.B)) || 0
 
-  coordX = 220 - 220 * X
-  coordY = 180 - 180 * Y
+  X = 220 * coordX
+  Y = 180 - 180 * coordY
 
   return {
-    coordX, 
-    coordY
+    X, 
+    Y
   }
 
 }
 
 
-function getClickCoord(pickArea) {
+function getClickXY(pickArea) {
   
   const maxWidth = pickArea.width
   const maxHeight = pickArea.height
   
-  const kX = 255 / maxWidth
-  const kY = 255 / maxHeight
+  let X = pickArea.right - event.clientX
+  let Y = pickArea.bottom - event.clientY
 
-  let coordX = event.clientX - pickArea.x
-  let coordY = event.clientY - pickArea.y
+  if (X > maxWidth) {X = maxWidth}
+  if (X < 0) {X = 0}
+  if (Y > maxHeight) {Y = maxHeight}
+  if (Y < 0) {Y = 0}
 
-  if (coordX > maxWidth) {coordX = maxWidth}
-  if (coordX < 0) {coordX = 0}
-  if (coordY > maxHeight) {coordY = maxHeight}
-  if (coordY < 0) {coordY = 0}
-
-  let Xcent = Math.round(100 - coordX/maxWidth*100)/100
-  let Ycent = Math.round(100 - coordY/maxHeight*100)/100
-
-  let X = Math.round(coordX * kX)
-  let Y = Math.abs(Math.round(coordY * kY) - 255)
-  
-  
+  let Xcent = Math.round(X/maxWidth*100)/100
+  let Ycent = Math.round(Y/maxHeight*100)/100
+   
   return {
-    X, Y, Xcent, Ycent, coordX, coordY
+    Xcent, Ycent, X, Y
   }
 
 }

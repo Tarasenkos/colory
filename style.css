@@ -25,7 +25,7 @@
 
 }
 .field_3 {
-  background: rgb(139, 139, 212);
+  background: rgb(194, 226, 52);
   min-height: 100px;
   width: 200px;
 }
@@ -109,7 +109,7 @@
   border-radius: 50%;
   border: solid 2px white;
   box-shadow: 0 0 0 2px black;
-  transform: translate(-50%, -50%);
+  transform: translate(50%, 50%);
   pointer-events: none;
 }
 
