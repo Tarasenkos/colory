@@ -13,13 +13,13 @@
 }
 
 .field_1 {
-  background: rgb(182, 125, 125);
+  background: rgb(182, 125, 130);
   min-height: 100px;
   width: 200px;
 
 }
 .field_2 {
-  background: rgb(149, 212, 149);
+  background: rgb(149, 212, 148);
   min-height: 100px;
   width: 200px;
 
@@ -103,6 +103,7 @@
 
 
 .colory-pickpoint{
+  display:none;
   position:absolute;
   width: 11px;
   height: 11px;

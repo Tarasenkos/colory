@@ -18,23 +18,23 @@ export function getClickCoord() {
 
 export function parceColor(string) {
 
-  let RGB = string.slice(4, -1).split(', ')
+  let RGB = string.slice(4, -1).split(', ').map((el)=>+el)
+
   return {
-    R: +RGB[0] || 0,
-    G: +RGB[1] || 0,
-    B: +RGB[2] || 0
+    R: RGB[0] || 0,
+    G: RGB[1] || 0,
+    B: RGB[2] || 0,
+    RGB
   }
 }
 
-export function getBaseColor(self, color) {
+export function getBaseColor(self, elementColor) {
 
-  console.log('Входящий цвет:', color)
   let origRGB, RGB, R, G, B, baseColor
 
-  RGB = parceColor(color)
-  R = RGB.R
-  G = RGB.G
-  B = RGB.B
+  R = parceColor(elementColor).R
+  G = parceColor(elementColor).G
+  B = parceColor(elementColor).B
 
   if (R === G) {
     if (G === B) {
@@ -44,16 +44,11 @@ export function getBaseColor(self, color) {
     }
   }
   
-    origRGB = []
-
-  origRGB.push(R)
-  origRGB.push(G)
-  origRGB.push(B)
-  console.log('Цвет элемента: ', origRGB)
+  RGB = parceColor(elementColor).RGB
 
   let MaxEl, MinEl, MidEl, MaxId, MinId, MidId
 
-  RGB = [...origRGB]
+  //RGB = [...origRGB]
 
   MaxEl = Math.max(...RGB)
   MaxId = RGB.indexOf(MaxEl)
@@ -69,9 +64,9 @@ export function getBaseColor(self, color) {
   MidEl = +RGB.filter(() => true)
   MidId = RGB.indexOf(MidEl)
 
-  let posOfMin = MaxEl - MinEl
+  let positionOfMin = MaxEl - MinEl
 
-  MidEl = Math.round((MaxEl * (MidEl - MinEl) / posOfMin) * 255 / MaxEl) || MinEl
+  MidEl = Math.round((MaxEl * (MidEl - MinEl) / positionOfMin) * 255 / MaxEl) || MinEl
   MaxEl = 255
   MinEl = 0
 
@@ -80,7 +75,7 @@ export function getBaseColor(self, color) {
   RGB[MidId] = MidEl
 
   baseColor = `rgb(${RGB[0]}, ${RGB[1]}, ${RGB[2]})`
-  console.log('Базовый цвет: ', baseColor)
+  //console.log('Базовый цвет: ', baseColor)
   self.trig('rangeArea:setColor', baseColor)
 
   return baseColor

@@ -14,13 +14,12 @@ export class PickArea extends Listener {
   init() {
     this.root.innerHTML = this.getHTML()
     this.pickPiont = this.root.querySelector('.colory-pickpoint')
-
-    const baseColor = parceColor(getBaseColor(this, this.color))
     
-    const coord = RGB_TO_XY(this.color, baseColor)
-    getPointerPosition(this.pickPiont, coord)
+    const coord = RGB_TO_XY(this.color)
 
-  
+
+    setTimeout(() => { setPointerPosition(this.pickPiont, coord) },0)
+
     this.on('rangeArea:setColor', (arg) => this._changePickAreaColor(arg))
     this.addListener()
   }
@@ -37,9 +36,6 @@ export class PickArea extends Listener {
 
   onMousedown(event) {
 
-    const pickArea = event.target.getBoundingClientRect()
-    console.log(pickArea)
-    
     if (event.target.id === "pick") {
       const pickArea = event.target.getBoundingClientRect()
       const baseColor = parceColor(getBaseColor(this, this.color))
@@ -55,22 +51,25 @@ export class PickArea extends Listener {
   }
 }
 
-function getPointerPosition(pickPiont, coord) {
+function setPointerPosition(pickPiont, coord) {
 
-  pickPiont.style.right = coord.X + 'px'
-  pickPiont.style.bottom = coord.Y + 'px'
- 
-console.log('pickPiont', coord.X, coord.Y)
-
+  const parent = pickPiont.parentElement.getBoundingClientRect()
+  const width = parent.width
+  const height = parent.height
+  
+  pickPiont.style.right = width * coord.Xcent + 'px'
+  pickPiont.style.bottom = height * coord.Ycent + 'px'
+  pickPiont.style.display = "block"
+  
   }
 
 function onMouseMoveHandler(self, pickArea, baseColor) {
 
   return onmousemove = () => {
-    let coord = getClickXY(pickArea)
-    let color = XY_TO_RGB(baseColor, coord)
+    const coord = getClickXY(pickArea)
+    const color = XY_TO_RGB(baseColor, coord)
 
-    getPointerPosition(self.pickPiont, coord)
+    setPointerPosition(self.pickPiont, coord)
     changeTargetColor(self, color)
 
     onmouseup = () => {
@@ -85,8 +84,6 @@ function XY_TO_RGB(baseColor, coord) {
 
 let R,G,B,difR,difG,difB
 
-console.log('Исходные координаты', coord)
-
 difR = 255 - baseColor.R
 difG = 255 - baseColor.G
 difB = 255 - baseColor.B
@@ -97,33 +94,21 @@ G = Math.round((difG*coord.Xcent + baseColor.G) * coord.Ycent)
 B = Math.round((difB*coord.Xcent + baseColor.B) * coord.Ycent)
 
 
-  let result = `rgb(${R}, ${G}, ${B})`
+  const result = `rgb(${R}, ${G}, ${B})`
   return result
 }
 
-function RGB_TO_XY(elColor, baseColor) {
+function RGB_TO_XY(elColor) {
 
-  let difR, difG, difB
+  const {RGB} = parceColor(elColor)
 
-  difR = 255 - baseColor.R
-  difG = 255 - baseColor.G
-  difB = 255 - baseColor.B
+  const MaxEl = Math.max(...RGB)
+  const MinEl = Math.min(...RGB)
   
-
-  let {R, G, B} = parceColor(elColor)
-  let X, Y, coordX, coordY
- 
-  coordX = (G * baseColor.R - R * baseColor.G) / (R * difG - G * difR) || 0
-  coordY = 1 - (B / (difB * coordX + baseColor.B)) || 0
-
-  X = 220 * coordX
-  Y = 180 - 180 * coordY
-
-  return {
-    X, 
-    Y
-  }
-
+  const Xcent = MinEl/MaxEl
+  const Ycent = MaxEl/255
+  
+  return { Xcent, Ycent }
 }
 
 
@@ -140,17 +125,15 @@ function getClickXY(pickArea) {
   if (Y > maxHeight) {Y = maxHeight}
   if (Y < 0) {Y = 0}
 
-  let Xcent = Math.round(X/maxWidth*100)/100
-  let Ycent = Math.round(Y/maxHeight*100)/100
-   
+  let Xcent = X/maxWidth
+  let Ycent = Y/maxHeight
+
   return {
     Xcent, Ycent, X, Y
   }
-
 }
 
 function changeTargetColor(self, color) {
   self.target.style.backgroundColor = color
-
 }
 

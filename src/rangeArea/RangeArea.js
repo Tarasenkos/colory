@@ -27,13 +27,11 @@ export class RangeArea extends Listener {
       setColor(this)
 
       onmousemove = () => {
-        //if (event.target.id === "range") {
         setColor(this)
-        //}
       }
 
       onmouseup = () => {
-        setColor(this)()
+        setColor(this)
         onmousemove = null
         onmouseup = null
       }
@@ -50,7 +48,6 @@ function setColor(self, color = '') {
   sizeRange = event.target.clientHeight / 6
   let Y = event.offsetY || 0
   colorRange = Math.round(255 / sizeRange * Y)
-  console.log(Y)
 
   if (Y < sizeRange * 1) { rgb = [255, 0, colorRange] }
   else if (Y < sizeRange * 2) { rgb = [255 * 2 - colorRange, 0, 255] }
@@ -61,7 +58,5 @@ function setColor(self, color = '') {
   else { rgb = [255, 0, 0] }
   let result = `rgb(${rgb.join(', ')})`
   self.trig('rangeArea:setColor', result)
-  console.log('Базовый цвет: ', result)
-  return ()=> console.log(result)
 
 }

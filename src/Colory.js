@@ -8,14 +8,13 @@ export class Colory {
   }
 
   init() {
-    
     let self = this
     this.nodes.forEach((node) => 
-            node.addEventListener('click', (self) =>this.onClick(self)))
+            node.addEventListener('mousedown', (self) =>this.onClick(self)))
   }
 
   onClick(self) {
-    
+
     let target = self.target
     let modal = new ModalWindow(target)
     let coord = getClickCoord()
