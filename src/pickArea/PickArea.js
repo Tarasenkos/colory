@@ -8,11 +8,19 @@ export class PickArea extends Listener {
     this.root = root
     this.target = options.target
     this.color = options.color
-    console.log(this.color)
+  
   }
 
   init() {
     this.root.innerHTML = this.getHTML()
+    this.pickPiont = this.root.querySelector('.colory-pickpoint')
+
+    const baseColor = parceColor(getBaseColor(this, this.color))
+    
+    const coord = RGB_TO_XY(this.color, baseColor)
+    getPointerPosition(this.pickPiont, coord)
+
+  
     this.on('rangeArea:setColor', (arg) => this._changePickAreaColor(arg))
     this.addListener()
   }
@@ -20,98 +28,123 @@ export class PickArea extends Listener {
   getHTML() {
     return `
     <div class="colory-picker-area-above">
-    <div class="colory-picker-area" id="pick"></div>
+    <div class="colory-picker-area" id="pick">
+    <div class="colory-pickpoint"></div>
+    </div>
     </div>`
+
   }
 
-  onMousedown() {
-    
-    const target = event.target
+  onMousedown(event) {
 
-    if (target.id === "pick") {
-      const maxWidth = event.target.clientWidth
-      const maxHeight = event.target.clientHeight
+    const pickArea = event.target.getBoundingClientRect()
+    console.log(pickArea)
+    
+    if (event.target.id === "pick") {
+      const pickArea = event.target.getBoundingClientRect()
       const baseColor = parceColor(getBaseColor(this, this.color))
-      const coord = getPickAreaCoord(maxWidth, maxHeight)
-      this.color = computeColor(baseColor, coord)
       
-      changeTargetColor(this, this.color)
-      return onMouseMoveHandler(this, baseColor, maxWidth, maxHeight)
+      onMouseMoveHandler(this, pickArea, baseColor)()
     }
   }
 
-
-
-  _changePickAreaColor(arg) {
-    this.color = arg
+  _changePickAreaColor(color) {
+    this.color = color
     this.root.children[0].style.backgroundColor = this.color
-    console.log('Установили цвет: ', this.color )
+
+  }
+}
+
+function getPointerPosition(pickPiont, coord) {
+
+  pickPiont.style.right = coord.X + 'px'
+  pickPiont.style.bottom = coord.Y + 'px'
+ 
+console.log('pickPiont', coord.X, coord.Y)
 
   }
 
-}
+function onMouseMoveHandler(self, pickArea, baseColor) {
 
-function onMouseMoveHandler(self, baseColor, maxWidth, maxHeight) {
+  return onmousemove = () => {
+    let coord = getClickXY(pickArea)
+    let color = XY_TO_RGB(baseColor, coord)
 
-  onmousemove = () => {
-    let coord = getPickAreaCoord(maxWidth, maxHeight)
-    let color = computeColor(baseColor, coord)
-    
+    getPointerPosition(self.pickPiont, coord)
     changeTargetColor(self, color)
+
+    onmouseup = () => {
+      onmousemove = null
+      onmouseup = null
+    }
   }
-
-  onmouseup = () => {
-
-    onmousemove = null
-    onmouseup = null
-  }
-
 }
 
 
-function computeColor(initColor, coord) {
-
-  console.log('Начальный цвет: ', initColor )
-  console.log('Коэфф Х: ', coord.Xcent)
-  console.log('Коэфф Y: ', coord.Ycent )
-  
+function XY_TO_RGB(baseColor, coord) {
 
 let R,G,B,difR,difG,difB
 
-difR = 255 - initColor.R
-difG = 255 - initColor.G
-difB = 255 - initColor.B
+console.log('Исходные координаты', coord)
 
-R = Math.round((difR*coord.Xcent + initColor.R) * coord.Ycent)
-G = Math.round((difG*coord.Xcent + initColor.G) * coord.Ycent)
-B = Math.round((difB*coord.Xcent + initColor.B) * coord.Ycent)
+difR = 255 - baseColor.R
+difG = 255 - baseColor.G
+difB = 255 - baseColor.B
+
+
+R = Math.round((difR*coord.Xcent + baseColor.R) * coord.Ycent)
+G = Math.round((difG*coord.Xcent + baseColor.G) * coord.Ycent)
+B = Math.round((difB*coord.Xcent + baseColor.B) * coord.Ycent)
 
 
   let result = `rgb(${R}, ${G}, ${B})`
-  console.log('Результат: ', result)
   return result
 }
 
+function RGB_TO_XY(elColor, baseColor) {
 
+  let difR, difG, difB
 
-function getPickAreaCoord(maxWidth, maxHeight) {
-  let kX = 255 / maxWidth
-  let kY = 255 / maxHeight
-
-  let Xcent = Math.round(100 - event.offsetX/maxWidth*100)/100
-  let Ycent = Math.round(100 - event.offsetY/maxHeight*100)/100
-
-  let X = Math.round(event.offsetX * kX)
-  let Y = Math.abs(Math.round(event.offsetY * kY) - 255)
-
-  if (X > 255) { X = 255 }
-  if (X < 0) { X = 0 }
-
-  if (Y > 255) { Y = 255 }
-  if (Y < 0) { Y = 0 }
+  difR = 255 - baseColor.R
+  difG = 255 - baseColor.G
+  difB = 255 - baseColor.B
   
+
+  let {R, G, B} = parceColor(elColor)
+  let X, Y, coordX, coordY
+ 
+  coordX = (G * baseColor.R - R * baseColor.G) / (R * difG - G * difR) || 0
+  coordY = 1 - (B / (difB * coordX + baseColor.B)) || 0
+
+  X = 220 * coordX
+  Y = 180 - 180 * coordY
+
   return {
-    X, Y, Xcent, Ycent
+    X, 
+    Y
+  }
+
+}
+
+
+function getClickXY(pickArea) {
+  
+  const maxWidth = pickArea.width
+  const maxHeight = pickArea.height
+  
+  let X = pickArea.right - event.clientX
+  let Y = pickArea.bottom - event.clientY
+
+  if (X > maxWidth) {X = maxWidth}
+  if (X < 0) {X = 0}
+  if (Y > maxHeight) {Y = maxHeight}
+  if (Y < 0) {Y = 0}
+
+  let Xcent = Math.round(X/maxWidth*100)/100
+  let Ycent = Math.round(Y/maxHeight*100)/100
+   
+  return {
+    Xcent, Ycent, X, Y
   }
 
 }
