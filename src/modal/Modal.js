@@ -9,11 +9,9 @@ export class ModalWindow {
     this.components = [PickArea, RangeArea]
     this.target = target
     this.trigger = new Trigger
-    this.color = window.getComputedStyle(this.target).backgroundColor //target.style.backgroundColor || 'rgb(255, 255, 255)'
+    this.color = window.getComputedStyle(this.target).backgroundColor 
     
   }
-
-    
 
   render(coord) {
     

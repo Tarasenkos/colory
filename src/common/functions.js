@@ -48,8 +48,6 @@ export function getBaseColor(self, elementColor) {
 
   let MaxEl, MinEl, MidEl, MaxId, MinId, MidId
 
-  //RGB = [...origRGB]
-
   MaxEl = Math.max(...RGB)
   MaxId = RGB.indexOf(MaxEl)
   RGB[MaxId] = 255
@@ -75,7 +73,6 @@ export function getBaseColor(self, elementColor) {
   RGB[MidId] = MidEl
 
   baseColor = `rgb(${RGB[0]}, ${RGB[1]}, ${RGB[2]})`
-  //console.log('Базовый цвет: ', baseColor)
   self.trig('rangeArea:setColor', baseColor)
 
   return baseColor
