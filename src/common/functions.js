@@ -30,7 +30,7 @@ export function parceColor(string) {
 
 export function getBaseColor(self, elementColor) {
 
-  let origRGB, RGB, R, G, B, baseColor
+  let RGB, R, G, B, baseColor
 
   R = parceColor(elementColor).R
   G = parceColor(elementColor).G

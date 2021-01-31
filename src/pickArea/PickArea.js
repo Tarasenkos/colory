@@ -8,6 +8,7 @@ export class PickArea extends Listener {
     this.root = root
     this.target = options.target
     this.color = options.color
+    this.baseColor = this.color
 
   }
 
@@ -15,10 +16,10 @@ export class PickArea extends Listener {
     this.root.innerHTML = this.getHTML()
     this.pickPiont = this.root.querySelector('.colory-pickpoint')
 
-    const pointerPosition = RGB_TO_XY(this.color)
+    const pointerPosition = this.getPointerPosition()
     setTimeout(() => { setPointerPosition(this.pickPiont, pointerPosition) }, 0)
 
-    this.on('rangeArea:setColor', (arg) => this._changePickAreaColor(arg))
+    this.on('rangeArea:setColor', (arg) => this.changeColor(arg))
     this.addListener()
   }
 
@@ -32,33 +33,55 @@ export class PickArea extends Listener {
 
   }
 
+  getPointerPosition() {
+
+  const { RGB } = parceColor(this.color)
+
+  const MaxEl = Math.max(...RGB)
+  const MinEl = Math.min(...RGB)
+
+  const Xcent = MinEl / MaxEl
+  const Ycent = MaxEl / 255
+
+  return { Xcent, Ycent }
+}
+
   onMousedown(event) {
 
     if (event.target.id === "pick") {
       const pickArea = event.target.getBoundingClientRect()
-      const baseColor = parceColor(getBaseColor(this, this.color))
-
-      onMouseMoveHandler(this, pickArea, baseColor)()
+      this.baseColor = getBaseColor(this, this.baseColor)
+      onMouseMoveHandler(this, pickArea)()
     }
   }
 
-  _changePickAreaColor(baseColor) {
-    this.color = baseColor
-    this.root.children[0].style.backgroundColor = this.color
-    setTragetColor(this)
+  changeColor(baseColor) {
+    this.baseColor = baseColor
+    this.root.children[0].style.backgroundColor = this.baseColor
+    setTargetColor(this)
   }
 }
 
-function setTragetColor(self) {
+function setTargetColor(self, pickArea = null) {
 
-    const baseColor = self.color
-    const parent = getParent(self.pickPiont)
-    const Xcent = +self.pickPiont.style.right.slice(0, -2) / parent.width
-    const Ycent = +self.pickPiont.style.bottom.slice(0, -2) / parent.height
-    const color = XY_TO_RGB(parceColor(baseColor), { Xcent, Ycent })
+    const pointerPosition = pickArea ? getClickXY(pickArea) : findPointer(self)
+    const color = XY_TO_RGB(parceColor(self.baseColor), pointerPosition )
+    pickArea && setPointerPosition(self.pickPiont, pointerPosition)
+    
+    self.target.style.backgroundColor = color
+    self.trig('colorChanged', color)
+    
 
-    changeTargetColor(self, color)
 }
+
+function findPointer(self) {
+
+  const parent = getParent(self.pickPiont)
+  const Xcent = +self.pickPiont.style.right.slice(0, -2) / parent.width
+  const Ycent = +self.pickPiont.style.bottom.slice(0, -2) / parent.height
+  return { Xcent, Ycent }
+}
+
 
 function setPointerPosition(pickPiont, coord) {
 
@@ -75,15 +98,11 @@ function getParent(child) {
 
 }
 
-function onMouseMoveHandler(self, pickArea, baseColor) {
+function onMouseMoveHandler(self, pickArea) {
 
   return onmousemove = () => {
-    const coord = getClickXY(pickArea)
-    const color = XY_TO_RGB(baseColor, coord)
-
-    setPointerPosition(self.pickPiont, coord)
-    changeTargetColor(self, color)
-
+    setTargetColor(self, pickArea)
+    
     onmouseup = () => {
       onmousemove = null
       onmouseup = null
@@ -110,19 +129,6 @@ function XY_TO_RGB(baseColor, coord) {
   return result
 }
 
-function RGB_TO_XY(elColor) {
-
-  const { RGB } = parceColor(elColor)
-
-  const MaxEl = Math.max(...RGB)
-  const MinEl = Math.min(...RGB)
-
-  const Xcent = MinEl / MaxEl
-  const Ycent = MaxEl / 255
-
-  return { Xcent, Ycent }
-}
-
 
 function getClickXY(pickArea) {
 
@@ -144,8 +150,3 @@ function getClickXY(pickArea) {
     Xcent, Ycent
   }
 }
-
-function changeTargetColor(self, newColor) {
-  self.target.style.backgroundColor = newColor
-}
-

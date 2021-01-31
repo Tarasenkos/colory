@@ -1,15 +1,17 @@
 import { createDomNode } from "../common/functions.js"
-import { Trigger } from "../common/Trigger.js"
+import { Listener } from "../common/Listener.js"
 import { PickArea } from "../pickArea/PickArea.js"
 import { RangeArea } from "../rangeArea/RangeArea.js"
 
 
-export class ModalWindow {
-  constructor(target) {
+export class ModalWindow extends Listener {
+  constructor(target, trigger) {
+    super([], null, trigger)
     this.components = [PickArea, RangeArea]
     this.target = target
-    this.trigger = new Trigger
+    this.trigger = trigger
     this.color = window.getComputedStyle(this.target).backgroundColor 
+    this.newColor = this.color
     
   }
 
@@ -20,18 +22,20 @@ export class ModalWindow {
         
         document.body.appendChild(modal)
         modal.addEventListener('mousedown', ()=> this.destroy(modal))
+
+        this.on('colorChanged', (color) => this.newColor = color )
+        this.on('modalClosed', () => console.log('Установлен цвет', this.newColor))
   }
 
   destroy(modal) {
     
     if (event.target.id === 'colory-modal') {
+      this.trig('modalClosed')
       modal.removeEventListener('mousedown', ()=> this.destroy(modal))
       document.body.removeChild(modal)
       modal = null
     }
-    
   }
-
 }
 
 function createModalWindow(self, screen) {

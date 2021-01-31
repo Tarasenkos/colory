@@ -1,4 +1,5 @@
 import { getClickCoord } from "./common/functions.js"
+import { Trigger } from "./common/Trigger.js"
 import {ModalWindow} from "./modal/modal.js"
 
 export class Colory {
@@ -16,11 +17,11 @@ export class Colory {
   onClick(self) {
 
     let target = self.target
-    let modal = new ModalWindow(target)
+    let trigger = new Trigger
+    let modal = new ModalWindow(target, trigger)
     let coord = getClickCoord()
     
     modal.render(coord)
-    
   }
  
 }
