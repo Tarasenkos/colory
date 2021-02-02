@@ -21,8 +21,10 @@ export class RangeArea extends Listener {
     return `<div class="colory-range-area" id="range"></div>`
   }
 
-  onMousedown() {
+  onMousedown(event) {
     if (event.target.id === "range") {
+
+      this.rangeArea = event.target.getBoundingClientRect()
 
       setColor(this)
 
@@ -31,7 +33,6 @@ export class RangeArea extends Listener {
       }
 
       onmouseup = () => {
-        setColor(this)
         onmousemove = null
         onmouseup = null
       }
@@ -44,9 +45,15 @@ function setColor(self, color = '') {
   
   if (color) return getBaseColor(self, color)
 
+  let rangeArea = self.rangeArea
   let rgb, sizeRange, colorRange
-  sizeRange = event.target.clientHeight / 6
-  let Y = event.offsetY || 0
+  let Y = event.clientY - rangeArea.top;
+
+  sizeRange = rangeArea.height / 6;
+
+  (Y > rangeArea.height) && (Y = rangeArea.height);
+  (Y < 0) && (Y = 0)
+
   colorRange = Math.round(255 / sizeRange * Y)
 
   if (Y < sizeRange * 1) { rgb = [255, 0, colorRange] }
@@ -56,6 +63,7 @@ function setColor(self, color = '') {
   else if (Y < sizeRange * 5) { rgb = [colorRange - 255 * 4, 255, 0] }
   else if (Y < sizeRange * 6) { rgb = [255, 255 * 6 - colorRange, 0] }
   else { rgb = [255, 0, 0] }
+  
   let result = `rgb(${rgb.join(', ')})`
   self.trig('rangeArea:setColor', result)
 
