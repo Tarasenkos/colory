@@ -1,8 +1,8 @@
 export class Listener {
  constructor(listeners, root, trigger) {
    this.listeners = listeners || []
-   this.root = root
-   this.trigger = trigger
+   this.root = root || ''
+   this.trigger = trigger || ''
    
  }
 

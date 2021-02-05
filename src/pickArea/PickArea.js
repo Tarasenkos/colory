@@ -1,5 +1,6 @@
-import { parceColor, getBaseColor } from "../common/functions.js"
+import { parseColor, getBaseColor } from "../common/functions.js"
 import { Listener } from "../common/Listener.js"
+import { Pointer } from "../pointer/pointer.js"
 
 export class PickArea extends Listener {
   static className = 'colory-picker'
@@ -13,42 +14,59 @@ export class PickArea extends Listener {
   }
 
   init() {
-    this.root.innerHTML = this.getHTML()
-    this.pickPiont = this.root.querySelector('.colory-pickpoint')
 
-    const pointerPosition = this.getPointerPosition()
-    setTimeout(() => { setPointerPosition(this.pickPiont, pointerPosition) }, 0)
+    //this.pickPiont = this.root.querySelector('.colory-pickarea-pickpoint')
+    
+    this.pointer = new Pointer(this, 'colory-pickarea-pickpoint')
+    
+    this.root.innerHTML = this.getHTML(this.pointer.render())
 
+    console.log('this.root', this.root)
+        
+    const pointerPosition = this.pointer.getPosition()
+
+    // setTimeout(() => { setPointerPosition(this.pickPiont, pointerPosition) }, 0)
+    setTimeout(() => { this.pointer.setPosition(pointerPosition) }, 0)
+    
     this.on('rangeArea:setColor', (arg) => this.changeColor(arg))
+    this.on('pointer:newPosition', (arg) => this.reRender(arg))
+
+
+
     this.addListener()
   }
 
-  getHTML() {
+
+  reRender(pointer) {
+    this.root.innerHTML = this.getHTML(pointer)
+  }
+
+  getHTML(pointer) {
     return `
     <div class="colory-picker-area-above">
-    <div class="colory-picker-area" id="pick">
-    <div class="colory-pickpoint"></div>
-    </div>
+      <div class="colory-picker-area" id="range">
+        ${pointer}
+      </div>
     </div>`
 
   }
 
-  getPointerPosition() {
+//   getPointerPosition() {
 
-  const { RGB } = parceColor(this.color)
+//   const { RGB } = parseColor(this.color)
 
-  const MaxEl = Math.max(...RGB)
-  const MinEl = Math.min(...RGB)
+//   const MaxEl = Math.max(...RGB)
+//   const MinEl = Math.min(...RGB)
 
-  const Xcent = MinEl / MaxEl
-  const Ycent = MaxEl / 255
+//   const Xcent = MinEl / MaxEl
+//   const Ycent = MaxEl / 255
 
-  return { Xcent, Ycent }
-}
+//   return { Xcent, Ycent }
+// }
 
   onMousedown(event) {
 
-    if (event.target.id === "pick") {
+    if (event.target.id === "range") {
       const pickArea = event.target.getBoundingClientRect()
       this.baseColor = getBaseColor(this, this.baseColor)
       onMouseMoveHandler(this, pickArea)()
@@ -64,9 +82,11 @@ export class PickArea extends Listener {
 
 function setTargetColor(self, pickArea = null) {
 
-    const pointerPosition = pickArea ? getClickXY(pickArea) : findPointer(self)
-    const color = XY_TO_RGB(parceColor(self.baseColor), pointerPosition )
-    pickArea && setPointerPosition(self.pickPiont, pointerPosition)
+    const pointerPosition = pickArea ? getClickXY(pickArea) : self.pointer.findPointer()
+    const color = XY_TO_RGB(parseColor(self.baseColor), pointerPosition )
+    pickArea && self.pointer.setPosition(pointerPosition)
+
+    
     
     self.target.style.backgroundColor = color
     self.trig('colorChanged', color)
@@ -74,29 +94,29 @@ function setTargetColor(self, pickArea = null) {
 
 }
 
-function findPointer(self) {
+// function findPointer(self) {
 
-  const parent = getParent(self.pickPiont)
-  const Xcent = +self.pickPiont.style.right.slice(0, -2) / parent.width
-  const Ycent = +self.pickPiont.style.bottom.slice(0, -2) / parent.height
-  return { Xcent, Ycent }
-}
+//   const parent = getParent(self.pickPiont)
+//   const Xcent = +self.pickPiont.style.right.slice(0, -2) / parent.width
+//   const Ycent = +self.pickPiont.style.bottom.slice(0, -2) / parent.height
+//   return { Xcent, Ycent }
+// }
 
 
-function setPointerPosition(pickPiont, coord) {
+// function setPointerPosition(pickPiont, coord) {
 
-  const parent = getParent(pickPiont)
+//   const parent = getParent(pickPiont)
 
-  pickPiont.style.right = parent.width * coord.Xcent + 'px'
-  pickPiont.style.bottom = parent.height * coord.Ycent + 'px'
-  pickPiont.style.display = "block"
+//   pickPiont.style.right = parent.width * coord.Xcent + 'px'
+//   pickPiont.style.bottom = parent.height * coord.Ycent + 'px'
+//   pickPiont.style.display = "block"
 
-}
+// }
 
-function getParent(child) {
-  return child.parentElement.getBoundingClientRect()
+// function getParent(child) {
+//   return child.parentElement.getBoundingClientRect()
 
-}
+// }
 
 function onMouseMoveHandler(self, pickArea) {
 

@@ -1,3 +1,6 @@
+
+
+
 export function createDomNode(nodeName, className = '', id = '') {
   let node = document.createElement(nodeName)
   className && node.classList.add(className)
@@ -16,7 +19,7 @@ export function getClickCoord() {
   return coord
 }
 
-export function parceColor(string) {
+export function parseColor(string) {
 
   let RGB = string.slice(4, -1).split(', ').map((el)=>+el)
 
@@ -32,9 +35,9 @@ export function getBaseColor(self, elementColor) {
 
   let RGB, R, G, B, baseColor
 
-  R = parceColor(elementColor).R
-  G = parceColor(elementColor).G
-  B = parceColor(elementColor).B
+  R = parseColor(elementColor).R
+  G = parseColor(elementColor).G
+  B = parseColor(elementColor).B
 
   if (R === G) {
     if (G === B) {
@@ -44,7 +47,7 @@ export function getBaseColor(self, elementColor) {
     }
   }
   
-  RGB = parceColor(elementColor).RGB
+  RGB = parseColor(elementColor).RGB
 
   let MaxEl, MinEl, MidEl, MaxId, MinId, MidId
 

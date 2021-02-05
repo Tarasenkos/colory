@@ -80,6 +80,8 @@
   
   background: linear-gradient(to right,rgba(255,255,255,1) 0,transparent 100%);
   background-image: linear-gradient(to right, rgb(255, 255, 255) 0px, transparent 100%);
+
+  cursor: crosshair;
   
 }
 
@@ -102,8 +104,8 @@
 }
 
 
-.colory-pickpoint{
-  display:none;
+.colory-pickarea-pickpoint{
+  /* display:none; */
   position:absolute;
   width: 11px;
   height: 11px;
@@ -121,6 +123,7 @@
 }
 
 .colory-range-area {
+  cursor: grab;
   min-width: 100%;
   min-height: 100%;
   background:-webkit-linear-gradient(top,#ff0000,#ff0080,#ff00ff,#8000ff,#0000ff,#0080ff,#00ffff,#00ff80,#00ff00,#80ff00,#ffff00,#ff8000,#ff0000); 
@@ -130,3 +133,31 @@
   background: -webkit-linear-gradient(top,#ff0000,#ff0080,#ff00ff,#8000ff,#0000ff,#0080ff,#00ffff,#00ff80,#00ff00,#80ff00,#ffff00,#ff8000,#ff0000); 
   background: linear-gradient(to bottom,#ff0000,#ff0080,#ff00ff,#8000ff,#0000ff,#0080ff,#00ffff,#00ff80,#00ff00,#80ff00,#ffff00,#ff8000,#ff0000); 
 }
+
+.colory-range-pickpoint {
+  background-color:wheat;
+  height: 2px;
+  width: 100%;
+  transform: translate(0, -50%);
+}
+.colory-range-pickpoint::before {
+  position: absolute;
+  content:'';
+  border: 5px solid transparent; 
+  border-left: 5px solid wheat;
+  transform: translate(-40%, calc(-50% + 1px)); 
+}
+.colory-range-pickpoint::after {
+  position: absolute;
+  content:'';
+  border: 5px solid transparent; 
+  border-right: 5px solid wheat;
+  right:0;
+  transform: translate(40%, calc(-50% + 1px)); 
+}
+
+.colory-grab{
+  cursor: grabbing;
+}
+
+

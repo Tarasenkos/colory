@@ -1,5 +1,6 @@
 import { getBaseColor } from "../common/functions.js";
 import { Listener } from "../common/Listener.js";
+import { Pointer } from "../pointer/pointer.js"
 
 export class RangeArea extends Listener {
   
@@ -8,17 +9,22 @@ export class RangeArea extends Listener {
     super(['mousedown'], root, options.trigger)
     this.root = root
     this.color = options.color
+    
 
   }
+
 
   init() {
     this.root.innerHTML = this.getHTML()
     this.addListener()
     setColor(this, this.color)
+
   }
 
   getHTML() {
-    return `<div class="colory-range-area" id="range"></div>`
+    return `<div class="colory-range-area" id="range">
+            <div class='colory-range-pickpoint'><span></span></div>
+            </div>`
   }
 
   onMousedown(event) {
