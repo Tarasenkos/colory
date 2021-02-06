@@ -1,4 +1,4 @@
-import { getBaseColor } from "../common/functions.js";
+import { getBaseColor, getClickXY } from "../common/functions.js";
 import { Listener } from "../common/Listener.js";
 import { Pointer } from "../pointer/pointer.js"
 
@@ -9,21 +9,34 @@ export class RangeArea extends Listener {
     super(['mousedown'], root, options.trigger)
     this.root = root
     this.color = options.color
-    
-
+    this.baseColor = this.color
+    this.pointer = new Pointer(this, 'colory-range-pickpoint')
   }
 
 
   init() {
-    this.root.innerHTML = this.getHTML()
+
+    const render = new Promise((resolve) => {
+      this.render()
+      resolve()
+    } )
+
+    render.then(()=>{
+      //this.pointer.setPosition({Xcent:0.5, Ycent: 0.5})// координаты для примера
+    })
+
+    this.on('pointer:newPosition', () => this.render())
     this.addListener()
     setColor(this, this.color)
-
   }
 
-  getHTML() {
+  render() {
+    this.root.innerHTML = this.getHTML(this.pointer.render())
+  }
+
+  getHTML(pointer) {
     return `<div class="colory-range-area" id="range">
-            <div class='colory-range-pickpoint'><span></span></div>
+            ${pointer}
             </div>`
   }
 
@@ -31,20 +44,24 @@ export class RangeArea extends Listener {
     if (event.target.id === "range") {
 
       this.rangeArea = event.target.getBoundingClientRect()
-
-      setColor(this)
-
-      onmousemove = () => {
-        setColor(this)
-      }
-
-      onmouseup = () => {
-        onmousemove = null
-        onmouseup = null
-      }
+      onMouseMoveHangler(this)()
     }
   }
 
+}
+
+function onMouseMoveHangler(self) {
+  return onmousemove = () => {
+    const coord = getClickXY(self.rangeArea, false)
+    self.pointer.setPosition(coord)
+    setColor(self)
+  
+
+  onmouseup = () => {
+    onmousemove = null
+    onmouseup = null
+  }
+}
 }
 
 function setColor(self, color = '') {

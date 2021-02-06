@@ -105,7 +105,7 @@
 
 
 .colory-pickarea-pickpoint{
-  /* display:none; */
+  display:none;
   position:absolute;
   width: 11px;
   height: 11px;
@@ -123,6 +123,7 @@
 }
 
 .colory-range-area {
+  position: relative;
   cursor: grab;
   min-width: 100%;
   min-height: 100%;
@@ -135,29 +136,30 @@
 }
 
 .colory-range-pickpoint {
-  background-color:wheat;
-  height: 2px;
+  position: absolute;
   width: 100%;
-  transform: translate(0, -50%);
 }
+
 .colory-range-pickpoint::before {
   position: absolute;
   content:'';
-  border: 5px solid transparent; 
+  border: 6px solid transparent; 
   border-left: 5px solid wheat;
-  transform: translate(-40%, calc(-50% + 1px)); 
+  transform: translate(-50%, -50%); 
 }
+
 .colory-range-pickpoint::after {
   position: absolute;
   content:'';
-  border: 5px solid transparent; 
-  border-right: 5px solid wheat;
+  border: 6px solid transparent; 
+  border-right: 6px solid wheat;
   right:0;
-  transform: translate(40%, calc(-50% + 1px)); 
+  transform: translate(50%, -50%); 
 }
 
 .colory-grab{
   cursor: grabbing;
+ 
 }
 
 

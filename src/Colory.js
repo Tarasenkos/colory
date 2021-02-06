@@ -9,29 +9,22 @@ export class Colory {
   }
 
   init() {
-    let self = this
     this.nodes.forEach((node) => 
-            node.addEventListener('mousedown', (self) =>this.onClick(self)))
+            node.addEventListener('mousedown', this.onMouseDown))
   }
 
-  onClick(self) {
-
-    let target = self.target
+  onMouseDown(event) {
+    
+    let target = event.target
     let trigger = new Trigger
     let modal = new ModalWindow(target, trigger)
     let coord = getClickCoord()
     
+    trigger.subscribe('pickArea:colorChanged', (color) => {
+      target.style.backgroundColor = color 
+    })
+
     modal.render(coord)
   }
- 
+
 }
-
-
-
-
-
-
-
-
-
-

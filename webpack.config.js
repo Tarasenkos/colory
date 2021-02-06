@@ -9,6 +9,7 @@ module.exports = {
   },
   devServer: {
     port: 1234,
+    hot: true,
   },
   plugins: [
     new HTMLPlugin ({

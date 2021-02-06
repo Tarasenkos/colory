@@ -9,6 +9,7 @@ constructor(self, className){
   this.root = self.root
   this.nodeClassName = className
   this.node = createDomNode('div', this.nodeClassName)
+  this.trigger = self.trigger
   
 }
 
@@ -31,23 +32,26 @@ getPosition() {
 
 setPosition(coord) {
 
-  const parent = this.root.querySelector('#range').getBoundingClientRect()
-  this.node.style.right = parent.width * coord.Xcent + 'px'
+  const parent = getParent(this)
+  this.node.style.right = parent.width * coord.Xcent + 'px' || 0
   this.node.style.bottom = parent.height * coord.Ycent + 'px'
   this.node.style.display = "block"
-
-  console.log('setPosition', this.node)
-
-  this.trig('pointer:newPosition', this.node.outerHTML )
+  this.trig('pointer:newPosition')
   
 }
 
 findPointer() {
 
-  const parent = this.root.querySelector('#range').getBoundingClientRect()
-  const Xcent = +this.node.style.right.slice(0, -2) / parent.width
-  const Ycent = +this.node.style.bottom.slice(0, -2) / parent.height
+  const parent = getParent(this)
+  const Xcent = +this.node.style.right.slice(0, -2) / parent.width || 0
+  const Ycent = +this.node.style.bottom.slice(0, -2) / parent.height || 0
   return { Xcent, Ycent }
 }
+
+}
+
+function getParent(self) {
+
+  return self.root.querySelector('#range').getBoundingClientRect()
 
 }
