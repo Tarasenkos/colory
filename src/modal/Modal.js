@@ -23,7 +23,7 @@ export class ModalWindow extends Listener {
         document.body.appendChild(modal)
         modal.addEventListener('mousedown', ()=> this.destroy(modal))
 
-        this.on('colorChanged', (color) => this.newColor = color )
+        this.on('pickArea:colorChanged', (color) => this.newColor = color )
         this.on('modalClosed', () => console.log('Установлен цвет', this.newColor))
   }
 

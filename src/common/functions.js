@@ -1,3 +1,6 @@
+
+
+
 export function createDomNode(nodeName, className = '', id = '') {
   let node = document.createElement(nodeName)
   className && node.classList.add(className)
@@ -5,10 +8,31 @@ export function createDomNode(nodeName, className = '', id = '') {
   return node
 }
 
+export function getClickXY(area, horizontal = true) {
+
+  const maxWidth = area.width
+  const maxHeight = area.height
+
+  let X = area.right - event.clientX
+  let Y = area.bottom - event.clientY
+
+  if (X > maxWidth) { X = maxWidth }
+  if (X < 0) { X = 0 }
+  if (Y > maxHeight) { Y = maxHeight }
+  if (Y < 0) { Y = 0 }
+
+  let Xcent = horizontal ? (X / maxWidth) : 0
+  let Ycent = Y / maxHeight
+
+  return {
+    Xcent, Ycent
+  }
+}
+
 
 export function getClickCoord() {
-
   let coord = {
+    
     x: event.clientX,
     y: event.clientY
   }
@@ -16,7 +40,7 @@ export function getClickCoord() {
   return coord
 }
 
-export function parceColor(string) {
+export function parseColor(string) {
 
   let RGB = string.slice(4, -1).split(', ').map((el)=>+el)
 
@@ -32,9 +56,9 @@ export function getBaseColor(self, elementColor) {
 
   let RGB, R, G, B, baseColor
 
-  R = parceColor(elementColor).R
-  G = parceColor(elementColor).G
-  B = parceColor(elementColor).B
+  R = parseColor(elementColor).R
+  G = parseColor(elementColor).G
+  B = parseColor(elementColor).B
 
   if (R === G) {
     if (G === B) {
@@ -44,7 +68,7 @@ export function getBaseColor(self, elementColor) {
     }
   }
   
-  RGB = parceColor(elementColor).RGB
+  RGB = parseColor(elementColor).RGB
 
   let MaxEl, MinEl, MidEl, MaxId, MinId, MidId
 

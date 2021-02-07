@@ -13,7 +13,4 @@ export class Trigger {
     this.events[eventName].push(fn)
   }
 
-
-
-
 }
