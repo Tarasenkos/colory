@@ -1,4 +1,4 @@
-import { getBaseColor, getClickXY } from "../common/functions.js";
+import { createDomNode, getBaseColor, getClickXY } from "../common/functions.js";
 import { Listener } from "../common/Listener.js";
 import { Pointer } from "../pointer/pointer.js"
 
@@ -13,37 +13,39 @@ export class RangeArea extends Listener {
     this.pointer = new Pointer(this, 'colory-range-pickpoint')
   }
 
-
   init() {
 
     const render = new Promise((resolve) => {
+      this.node = createDomNode('div', 'colory-range-area', 'range')
+      this.root.appendChild(this.node)
       this.render()
       resolve()
     } )
 
-    render.then(()=>{
-      //this.pointer.setPosition({Xcent:0.5, Ycent: 0.5})// координаты для примера
+    render.then(() => { 
+      const vertical = true
+      const coord = this.pointer.getPosition(vertical)
+      this.pointer.setPosition(coord)
     })
 
     this.on('pointer:newPosition', () => this.render())
     this.addListener()
+    
     setColor(this, this.color)
   }
 
   render() {
-    this.root.innerHTML = this.getHTML(this.pointer.render())
+    this.node.innerHTML = this.pointer.render()
   }
-
-  getHTML(pointer) {
-    return `<div class="colory-range-area" id="range">
-            ${pointer}
-            </div>`
-  }
-
+  
   onMousedown(event) {
-    if (event.target.id === "range") {
+    this.target = event.target
+    const target = this.target
+    if (target.id === "range") {
 
-      this.rangeArea = event.target.getBoundingClientRect()
+      target.classList.add('colory-grab')
+
+      this.rangeArea = target.getBoundingClientRect()
       onMouseMoveHangler(this)()
     }
   }
@@ -52,12 +54,14 @@ export class RangeArea extends Listener {
 
 function onMouseMoveHangler(self) {
   return onmousemove = () => {
-    const coord = getClickXY(self.rangeArea, false)
+    const horizontal = false
+    const coord = getClickXY(self.rangeArea, horizontal)
     self.pointer.setPosition(coord)
+
     setColor(self)
   
-
   onmouseup = () => {
+    self.target.classList.remove('colory-grab')
     onmousemove = null
     onmouseup = null
   }
@@ -88,6 +92,7 @@ function setColor(self, color = '') {
   else { rgb = [255, 0, 0] }
   
   let result = `rgb(${rgb.join(', ')})`
+
   self.trig('rangeArea:setColor', result)
 
 }

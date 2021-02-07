@@ -1,4 +1,4 @@
-import { createDomNode, parseColor } from "../common/functions.js";
+import { createDomNode, getBaseColor, parseColor } from "../common/functions.js";
 import { Listener } from "../common/Listener.js";
 
 export class Pointer extends Listener {
@@ -17,13 +17,13 @@ render() {
   return this.node.outerHTML
 }
 
-getPosition() {
+getPosition(vertical = false) {
+
+  if (vertical) return getVerticalPosition(this)
 
   const { RGB } = parseColor(this.color)
-
   const MaxEl = Math.max(...RGB)
   const MinEl = Math.min(...RGB)
-
   const Xcent = MinEl / MaxEl
   const Ycent = MaxEl / 255
 
@@ -54,4 +54,34 @@ function getParent(self) {
 
   return self.root.querySelector('#range').getBoundingClientRect()
 
+}
+
+function getVerticalPosition(self){
+  
+  let Ycent
+  const baseColor = getBaseColor(self, self.color)
+  const {R, G, B} = parseColor(baseColor)
+
+  const kY = 1/6
+
+  if (G === 0) {
+    if (B === 0) { Ycent = 0 }
+    else { Ycent = kY * B / 255 + kY * (255 - R) / 255 }
+  }
+
+  else {
+    Ycent = ( 2 * kY ) 
+          + (kY * G / 255)
+          + (kY * (255 - B) / 255 ) 
+          + (kY * R / 255 ) 
+    
+    if (R === 255) {
+      Ycent = (5 * kY) + (kY * (255 - G) / 255)
+    }
+  }
+  
+
+  Ycent = 1 - Ycent
+  
+  return { Xcent: 0, Ycent }
 }

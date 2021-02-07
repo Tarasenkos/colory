@@ -8,7 +8,7 @@ export function createDomNode(nodeName, className = '', id = '') {
   return node
 }
 
-export function getClickXY(area, Xcoord = true) {
+export function getClickXY(area, horizontal = true) {
 
   const maxWidth = area.width
   const maxHeight = area.height
@@ -21,7 +21,7 @@ export function getClickXY(area, Xcoord = true) {
   if (Y > maxHeight) { Y = maxHeight }
   if (Y < 0) { Y = 0 }
 
-  let Xcent = Xcoord ? (X / maxWidth) : 0
+  let Xcent = horizontal ? (X / maxWidth) : 0
   let Ycent = Y / maxHeight
 
   return {
@@ -31,8 +31,8 @@ export function getClickXY(area, Xcoord = true) {
 
 
 export function getClickCoord() {
-
   let coord = {
+    
     x: event.clientX,
     y: event.clientY
   }

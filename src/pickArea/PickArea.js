@@ -55,6 +55,8 @@ export class PickArea extends Listener {
 
   onMousedown(event) {
 
+    console.log('BaseColor', this.baseColor)
+
     if (event.target.id === "range") {
       const pickArea = event.target.getBoundingClientRect()
       onMouseMoveHandler(this, pickArea)()
