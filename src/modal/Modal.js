@@ -1,5 +1,6 @@
 import { createDomNode } from "../common/functions.js"
 import { Listener } from "../common/Listener.js"
+import { InfoArea } from "../infoArea/InfoArea.js"
 import { PickArea } from "../pickArea/PickArea.js"
 import { RangeArea } from "../rangeArea/RangeArea.js"
 
@@ -7,7 +8,7 @@ import { RangeArea } from "../rangeArea/RangeArea.js"
 export class ModalWindow extends Listener {
   constructor(target, trigger) {
     super([], null, trigger)
-    this.components = [PickArea, RangeArea]
+    this.components = [PickArea, RangeArea, InfoArea]
     this.target = target
     this.trigger = trigger
     this.color = window.getComputedStyle(this.target).backgroundColor 
@@ -15,8 +16,10 @@ export class ModalWindow extends Listener {
     
   }
 
+  
+
   render(coord) {
-    
+
     let modal = createDomNode('div', 'colory-modal', 'colory-modal')
         modal.appendChild(createModalWindow(this, coord))
         
@@ -46,7 +49,7 @@ function createModalWindow(self, screen) {
     self.components.map((Component)=>{
       let root = createDomNode('div', Component.className)
       let component = new Component(root, self)
-          component.init(root)
+          component.init()
           domNode.appendChild(root)
     })
   
