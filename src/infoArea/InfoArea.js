@@ -14,12 +14,9 @@ export class InfoArea extends Listener {
       this.root.innerHTML = this.getHTML(color)})
   }
 
-  getHTML(color) {
-    console.log(color)
+  getHTML(color = null) {
     return `<div class="colory-info-area">
             ${color}
             </div>`
-
-
   }
 } 

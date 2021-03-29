@@ -16,8 +16,6 @@ export class ModalWindow extends Listener {
     
   }
 
-  
-
   render(coord) {
 
     let modal = createDomNode('div', 'colory-modal', 'colory-modal')
@@ -43,15 +41,15 @@ export class ModalWindow extends Listener {
 
 function createModalWindow(self, screen) {
     
-    let domNode = createDomNode('div', 'colory-window')
-        domNode.style = `left: ${screen.x}px; top: ${screen.y}px`
+    let modalWindow = createDomNode('div', 'colory-window')
+    modalWindow.style = `left: ${screen.x}px; top: ${screen.y}px`
     
-    self.components.map((Component)=>{
+    self.components.forEach((Component)=>{
       let root = createDomNode('div', Component.className)
       let component = new Component(root, self)
           component.init()
-          domNode.appendChild(root)
+          modalWindow.appendChild(root)
     })
   
-  return domNode
+  return modalWindow
 }

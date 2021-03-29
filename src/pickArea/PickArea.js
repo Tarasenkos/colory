@@ -55,8 +55,6 @@ export class PickArea extends Listener {
 
   onMousedown(event) {
 
-    console.log('BaseColor', this.baseColor)
-
     if (event.target.id === "range") {
       const pickArea = event.target.getBoundingClientRect()
       onMouseMoveHandler(this, pickArea)()
@@ -86,7 +84,6 @@ function onMouseMoveHandler(self, pickArea) {
 }
 
 
-
 function XY_TO_RGB(baseColor, coord) {
 
   let R, G, B, difR, difG, difB
@@ -95,11 +92,9 @@ function XY_TO_RGB(baseColor, coord) {
   difG = 255 - baseColor.G
   difB = 255 - baseColor.B
 
-
   R = Math.round((difR * coord.Xcent + baseColor.R) * coord.Ycent)
   G = Math.round((difG * coord.Xcent + baseColor.G) * coord.Ycent)
   B = Math.round((difB * coord.Xcent + baseColor.B) * coord.Ycent)
-
 
   const result = `rgb(${R}, ${G}, ${B})`
   return result
